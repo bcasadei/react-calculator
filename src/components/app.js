@@ -9,20 +9,12 @@ class App extends Component {
 
     this.state = {
       display: 0,
-      result: null,
+      memory: 0,
       operator: null,
-      history: []
+      history: [],
+      clearBtn: "AC"
     };
   };
-
-  // num1 + num2 = display
-  // If button is a number and not 0
-      // - concat to current number and update display
-  // If button is an operator
-    // store number in num1 var
-  // If button is number after an operator
-    // store number num2 var
-  // If button is equals perform calculation and display result
 
   updateDisplay(value) {
     this.setState({
@@ -38,41 +30,43 @@ class App extends Component {
 
   updateHistory(value) {
     this.setState({
-      history: [...this.state.history, value]
+      history: value
     });
   }
 
   resetHistory(value) {
     this.setState({
-      history: [value]
+      history: value
     });
   }
 
   allClear() {
     this.setState({
       display: 0,
-      result: null,
+      memory: 0,
       operator: null,
-      history: []
+      history: [],
+      clearBtn: "AC"
     });
   }
 
-  clearEntry() {
-    var history = this.state.history //.slice(0, this.state.history.length);
-    var display = this.state.display;
-    console.log(history);
+  updateMemory(value) {
     this.setState({
-      display: history[history.length - display.length],
-      history: history.slice(0, history.length - display.length)
+      memory: value
     });
+  }
+
+  toggleClearBtn(input) {
+    input === "C" ?
+    this.setState({clearBtn: "AC"}) :
+    this.setState({clearBtn: "C"})
   }
 
   calculate(arr) {
     let operator = this.state.operator;
-    let operatorIdx = arr.indexOf(operator);
-    let num1 = parseFloat(arr.slice(0, operatorIdx).join(''));
-    let num2 = parseFloat(arr.slice(operatorIdx + 1, arr.length).join(''));
-
+    let num1 = parseFloat(this.state.memory);
+    let num2 = parseFloat(this.state.display);
+    console.log(num1 + operator + num2);
     switch(operator) {
       case "+":
         return num1 + num2;
@@ -96,8 +90,11 @@ class App extends Component {
     if(input === "AC") {
       this.allClear();
     }
-    else if(input === "CE") {
-      this.clearEntry();
+    else if(input === "C") {
+      this.updateDisplay(0);
+      this.toggleClearBtn(input);
+      history.pop();
+      this.updateHistory(history);
     }
     else if((type === "number" &&
             display === 0) ||
@@ -105,20 +102,33 @@ class App extends Component {
             /[=\+\-x\/]/g.test(history[history.length - 1])))
     {
       this.updateDisplay(input);
-      this.updateHistory(input);
+      this.toggleClearBtn(input);
+      this.updateHistory([...history, input]);
     }
     else if(type === "number") {
       this.updateDisplay(display += input);
-      this.updateHistory(input);
+      this.toggleClearBtn(input);
+      this.updateHistory([display]);
+    }
+    else if(type === "operator" &&
+            /[=\+\-x\/]/g.test(history) &&
+            /[\d]/g.test(history[history.length - 1]))
+      {
+      let memory = this.calculate();
+      this.updateOperator(input);
+      this.updateMemory(memory);
+      this.updateDisplay(memory);
+      this.resetHistory([memory, input]);
     }
     else if(type === "operator") {
       this.updateOperator(input);
-      this.updateHistory(input);
+      this.updateMemory(display);
+      this.updateHistory([...history, input]);
     }
     else if(input === "=") {
-      let result = this.calculate(history);
-      this.updateDisplay(result);
-      this.resetHistory(result);
+      let memory = this.calculate();
+      this.updateDisplay(memory);
+      this.resetHistory([memory]);
     }
   }
 
@@ -130,13 +140,13 @@ class App extends Component {
 
         <div className="row">
           <Btn
-            value="AC"
+            value={this.state.clearBtn}
             type="action"
             onBtnInput={(value, type) => this.onBtnInput({value, type})}
             btnClass="btn large"/>
 
           <Btn
-            value="CE"
+            value="+/-"
             type="action"
             onBtnInput={(value, type) => this.onBtnInput({value, type})}/>
 
