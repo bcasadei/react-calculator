@@ -34,12 +34,6 @@ class App extends Component {
     });
   }
 
-  resetHistory(value) {
-    this.setState({
-      history: value
-    });
-  }
-
   allClear() {
     this.setState({
       display: 0,
@@ -56,7 +50,7 @@ class App extends Component {
     });
   }
 
-  toggleClearBtn(input) {
+  updateClearBtn(input) {
     input === "C" ?
     this.setState({clearBtn: "AC"}) :
     this.setState({clearBtn: "C"})
@@ -66,7 +60,11 @@ class App extends Component {
     let operator = this.state.operator;
     let num1 = parseFloat(this.state.memory);
     let num2 = parseFloat(this.state.display);
-    console.log(num1 + operator + num2);
+
+    console.log("Mem :" + num1);
+    console.log("Operator: " + operator);
+    console.log("Display: " + num2);
+
     switch(operator) {
       case "+":
         return num1 + num2;
@@ -77,7 +75,7 @@ class App extends Component {
       case "x":
         return num1 * num2;
       default:
-        break;
+        return num2;
     }
   }
 
@@ -92,33 +90,39 @@ class App extends Component {
     }
     else if(input === "C") {
       this.updateDisplay(0);
-      this.toggleClearBtn(input);
+      this.updateClearBtn(input);
       history.pop();
       this.updateHistory(history);
+    }
+    else if(input === "+/-") {
+      if(display > 0) {
+        this.updateDisplay(-display);
+      } else {
+        this.updateDisplay(Math.abs(display));
+      }
     }
     else if((type === "number" &&
             display === 0) ||
             (type === "number" &&
-            /[=\+\-x\/]/g.test(history[history.length - 1])))
-    {
+            /[=\+\-x\/]/g.test(history[history.length - 1]))) {
       this.updateDisplay(input);
-      this.toggleClearBtn(input);
+      this.updateClearBtn(input);
       this.updateHistory([...history, input]);
     }
     else if(type === "number") {
       this.updateDisplay(display += input);
-      this.toggleClearBtn(input);
-      this.updateHistory([display]);
+      this.updateClearBtn(input);
+      history.pop();
+      this.updateHistory([...history, display]);
     }
     else if(type === "operator" &&
             /[=\+\-x\/]/g.test(history) &&
-            /[\d]/g.test(history[history.length - 1]))
-      {
-      let memory = this.calculate();
+            /[\d]/g.test(history[history.length - 1])) {
       this.updateOperator(input);
-      this.updateMemory(memory);
-      this.updateDisplay(memory);
-      this.resetHistory([memory, input]);
+      let result = this.calculate();
+      this.updateMemory(result);
+      this.updateDisplay(result);
+      this.updateHistory([result, input]);
     }
     else if(type === "operator") {
       this.updateOperator(input);
@@ -126,9 +130,10 @@ class App extends Component {
       this.updateHistory([...history, input]);
     }
     else if(input === "=") {
-      let memory = this.calculate();
-      this.updateDisplay(memory);
-      this.resetHistory([memory]);
+      let result = this.calculate();
+      this.updateMemory(result);
+      this.updateDisplay(result);
+      this.updateHistory([result, input]);
     }
   }
 
