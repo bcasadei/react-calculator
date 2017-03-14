@@ -61,10 +61,6 @@ class App extends Component {
     let num1 = parseFloat(this.state.memory);
     let num2 = parseFloat(this.state.display);
 
-    console.log("Mem :" + num1);
-    console.log("Operator: " + operator);
-    console.log("Display: " + num2);
-
     switch(operator) {
       case "+":
         return num1 + num2;
@@ -138,7 +134,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.history);
     return (
       <div className="container">
         <Display display={this.state.display} />
