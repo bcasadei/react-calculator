@@ -75,9 +75,9 @@ class App extends Component {
     }
   }
 
-  onBtnInput(btn) {
-    let input = btn.value
-    let type = btn.type
+  onBtnInput(event) {
+    let input = event.value
+    let type = event.type
     let display = this.state.display;
     let history = this.state.history;
 
