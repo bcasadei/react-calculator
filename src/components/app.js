@@ -14,7 +14,7 @@ class App extends Component {
       history: [],
       clearBtn: "AC"
     };
-  };
+  }
 
   updateDisplay(value) {
     this.setState({
@@ -50,18 +50,17 @@ class App extends Component {
     });
   }
 
-  updateClearBtn(input) {
-    input === "C" ?
+  updateClearBtn(value) {
+    value === "C" ?
     this.setState({clearBtn: "AC"}) :
     this.setState({clearBtn: "C"})
   }
 
   calculate(arr) {
-    let operator = this.state.operator;
     let num1 = parseFloat(this.state.memory);
     let num2 = parseFloat(this.state.display);
 
-    switch(operator) {
+    switch(this.state.operator) {
       case "+":
         return num1 + num2;
       case "-":
@@ -76,21 +75,20 @@ class App extends Component {
   }
 
   onBtnInput(event) {
-    let input = event.value
-    let type = event.type
+    const { value, type } = event;
     let display = this.state.display;
     let history = this.state.history;
 
-    if(input === "AC") {
+    if(value === "AC") {
       this.allClear();
     }
-    else if(input === "C") {
+    else if(value === "C") {
       this.updateDisplay(0);
-      this.updateClearBtn(input);
+      this.updateClearBtn(value);
       history.pop();
       this.updateHistory(history);
     }
-    else if(input === "+/-") {
+    else if(value === "+/-") {
       if(display > 0) {
         this.updateDisplay(-display);
       } else {
@@ -101,35 +99,35 @@ class App extends Component {
             display === 0) ||
             (type === "number" &&
             /[=\+\-x\/]/g.test(history[history.length - 1]))) {
-      this.updateDisplay(input);
-      this.updateClearBtn(input);
-      this.updateHistory([...history, input]);
+      this.updateDisplay(value);
+      this.updateClearBtn(value);
+      this.updateHistory([...history, value]);
     }
     else if(type === "number") {
-      this.updateDisplay(display += input);
-      this.updateClearBtn(input);
+      this.updateDisplay(display += value);
+      this.updateClearBtn(value);
       history.pop();
       this.updateHistory([...history, display]);
     }
     else if(type === "operator" &&
             /[=\+\-x\/]/g.test(history) &&
             /[\d]/g.test(history[history.length - 1])) {
-      this.updateOperator(input);
+      this.updateOperator(value);
       let result = this.calculate();
       this.updateMemory(result);
       this.updateDisplay(result);
-      this.updateHistory([result, input]);
+      this.updateHistory([result, value]);
     }
     else if(type === "operator") {
-      this.updateOperator(input);
+      this.updateOperator(value);
       this.updateMemory(display);
-      this.updateHistory([...history, input]);
+      this.updateHistory([...history, value]);
     }
-    else if(input === "=") {
+    else if(value === "=") {
       let result = this.calculate();
       this.updateMemory(result);
       this.updateDisplay(result);
-      this.updateHistory([result, input]);
+      this.updateHistory([result, value]);
     }
   }
 
@@ -137,7 +135,6 @@ class App extends Component {
     return (
       <div className="container">
         <Display display={this.state.display} />
-
         <div className="row">
           <Btn
             value={this.state.clearBtn}
@@ -186,7 +183,6 @@ class App extends Component {
 
           <Btn
             value="6"
-
             onBtnInput={(value, type) => this.onBtnInput({value, type})}/>
 
           <Btn
@@ -198,17 +194,14 @@ class App extends Component {
         <div className="row">
           <Btn
             value="1"
-
             onBtnInput={(value, type) => this.onBtnInput({value, type})}/>
 
           <Btn
             value="2"
-
             onBtnInput={(value, type) => this.onBtnInput({value, type})}/>
 
           <Btn
             value="3"
-
             onBtnInput={(value, type) => this.onBtnInput({value, type})}/>
 
           <Btn
