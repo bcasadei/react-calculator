@@ -1,4 +1,4 @@
 <h2>React-Calculator</h2>
-Demo: [https://bcasadei.github.io/react-calculator/](https://bcasadei.github.io/react-calculator/)
+<p>[View Demo](https://bcasadei.github.io/react-calculator/)</p>
 
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+<p>This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).</p>
